@@ -1,0 +1,17 @@
+# Dev environment
+pip
+autopep8
+#pkgs.python-launcher
+
+# App
+asgiref==3.7.2
+Django==5.0
+sqlparse==0.4.4
+typing_extensions==4.9.0
+djangorestframework==3.15.2
+pycodestyle==2.12.0
+dj-database-url==2.2.0
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.4.0
+PyJWT==2.8.0
+django-appconf==1.0.6
