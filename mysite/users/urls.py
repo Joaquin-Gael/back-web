@@ -10,6 +10,8 @@ router.register(r'type_users', views.TypeUserViews, basename='type_users')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('visit/', views.VisitCreateView.as_view(), name='visit_create'),
+    path('visit/chart',views.VisitDataChart.as_view(),name='visit_chart')
 ]

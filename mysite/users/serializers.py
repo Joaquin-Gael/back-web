@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import (User, TypeUser)
+from users.models import (User, TypeUser, Visit, WeeklyVisit)
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,4 +23,14 @@ class UserSerializer(serializers.ModelSerializer):
 class TypeUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = TypeUser
+        fields = '__all__'
+
+class VisitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Visit
+        fields = '__all__'
+
+class WeeklyVisitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WeeklyVisit
         fields = '__all__'

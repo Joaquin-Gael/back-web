@@ -65,3 +65,45 @@ class User(AbstractUser):
         
     def __unicode__(self):
         return self.username
+    
+class Visit(models.Model):
+    timestap = models.DateTimeField(auto_now_add=True)
+    ip_addres = models.GenericIPAddressField()
+    user_agent = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f'''
+            {self.timestap},
+            {self.ip_addres},
+            {self.user_agent}
+        '''
+    
+    class Meta:
+        db_table = 'visits'
+        verbose_name = 'Visit'
+        verbose_name_plural = 'Visits'
+        ordering = ['id']
+        
+    def __unicode__(self):
+        return self.timestap
+
+class WeeklyVisit(models.Model):
+    week_start = models.DateField()
+    week_end = models.DateField()
+    visit_count = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f'''
+            {self.week_start},
+            {self.week_end},
+            {self.visit_count}
+        '''
+
+    class Meta:
+        db_table = 'weekly_visits'
+        verbose_name = 'WeeklyVisit'
+        verbose_name_plural = 'WeeklyVisits'
+        ordering = ['id']
+
+    def __unicode__(self):
+        return self.week_start
