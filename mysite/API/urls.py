@@ -11,8 +11,6 @@ router.registry.extend(users_router.registry)
 router.registry.extend(posts_router.registry)
 
 urlpatterns = [
-    path('users/',include('users.urls')),
-    path('posts/',include('posts.urls')),
     path('web/',views.IndexAPI.as_view(),name='index'),
     path('',include(router.urls))
 ]
