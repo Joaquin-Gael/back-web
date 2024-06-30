@@ -6,7 +6,7 @@ from . import (models, serializers)
 # Create your views here.
 class IndexAPI(views.View):
     def get(self,request,*args,**kwargs):
-        if not request.user.is_authenticated:
+        if request.user.is_authenticated:
             return redirect('login')
         messages = models.MessagesAPI.objects.all()
         return render(request,'index.html',{
@@ -23,13 +23,34 @@ class LoginAPI(views.View):
             username = request.POST.get('username')
             password = request.POST.get('password')
             user = models.User.objects.get(username=username)
+            if user.is_staff_user:
+                user.login_date_set(request)
+                return redirect('index')
+            else:
+                return redirect('login')
         except:
             redirect('login')
-        if user.is_superuser:
-            user.login_date_set(request)
-            return redirect('index')
-        else:
-            redirect('login')
+
+class LogoutAPI(views.View):
+    def get(self,request,*args,**kwargs):
+        try:
+            user = request.user
+            user.logout_date_set()
+            return redirect('login')
+        except:
+            return redirect('login')
+
+class UsersAPI(views.View):
+    def get(self,request,*args,**kwargs):
+        try:
+            users = models.User.objects.all()
+            return render(request,'users.html',{
+                'users':users
+            })
+        except:
+            return render(request,'users.html',{
+                'users':[]
+            })
             
 
 class MessagesAPI(viewsets.ModelViewSet):
