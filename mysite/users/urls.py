@@ -9,7 +9,7 @@ router.register(r'users', views.UserViews, basename='users')
 router.register(r'type_users', views.TypeUserViews, basename='type_users')
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include(router.urls), name='user_api'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('visit/', views.VisitCreateView.as_view(), name='visit_create'),

@@ -13,5 +13,6 @@ router.registry.extend(posts_router.registry)
 urlpatterns = [
     path('web/',views.IndexAPI.as_view(),name='index'),
     path('',include(router.urls)),
-    path('',include('users.urls'))
+    path('',include('users.urls')),
+    path('login/',views.LoginAPI.as_view(),name='login')
 ]
