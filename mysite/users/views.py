@@ -11,12 +11,12 @@ from . import (serializers, models)
 class UserViews(viewsets.ModelViewSet):
     queryset = models.User.objects.all()
     serializer_class = serializers.UserSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class TypeUserViews(viewsets.ModelViewSet):
     queryset = models.TypeUser.objects.all()
     serializer_class = serializers.TypeUserSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class VisitCreateView(views.APIView):
     def post(self, request, *args, **kwargs):
