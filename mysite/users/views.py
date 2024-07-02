@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from django.utils import timezone
 from django.contrib.auth import (authenticate, login, logout)
-from rest_framework import (viewsets, views, permissions, status, response)
+from rest_framework import (viewsets, views, permissions, status, response, authentication)
 from datetime import timedelta
 from . import (serializers, models)
 
@@ -19,6 +19,9 @@ class TypeUserViews(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class VisitCreateView(views.APIView):
+    authentication_classes = [authentication.TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
     def post(self, request, *args, **kwargs):
         try:
             ip_addres = request.META.get('REMOTE_ADDR')
@@ -58,6 +61,8 @@ class VisitCreateView(views.APIView):
 
 
 class VisitDataChart(views.APIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
     def get(self,request,*args,**kwargs):
         try:
             categories, data = self.get_weekly_visit_data()
