@@ -31,17 +31,17 @@ class User(AbstractUser):
     date_joined = models.DateField(auto_now_add=True)
     last_login = models.DateField(null=True, blank=True)
     last_logout = models.DateField(null=True, blank=True)
-    type_user = models.ForeignKey(TypeUser, on_delete=models.CASCADE)
+    type_user = models.ForeignKey(TypeUser, on_delete=models.CASCADE, null=True)
 
     def is_staff_user(self):
         return self.is_staff
 
-    def login_date_set(self,request):
+    def login_date_set(self,request,password):
         self.last_login = timezone.now()
         self.save()
-        login(request, authenticate(username=self.username, password=self.password))
+        login(request, authenticate(username=self.username, password=password))
     
-    def logout_date_set(self):
+    def logout_date_set(self,request):
         self.last_logout = timezone.now()
         self.save()
         logout(request)

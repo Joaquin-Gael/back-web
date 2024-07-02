@@ -26,9 +26,9 @@
         <form class="flex flex-col" method="POST" action="{% url 'login' %}">
             {% csrf_token %}
             <div class="pb-2">
-                <label for="Username" class="block mb-2 text-lg font-medium text-[#111827] hover:text-blue-500">Username</label>
+                <label for="username" class="block mb-2 text-lg font-medium text-[#111827] hover:text-blue-500">Username</label>
                 <div class="relative text-gray-400"><span class="absolute inset-y-0 left-0 flex items-center p-1 pl-3"><i class="fa-regular fa-user fa-lg"></i></span> 
-                    <input type="txex" name="Username" id="Username" class="pl-12 mb-2 bg-gray-50 text-gray-600 border focus:border-transparent border-gray-300 sm:text-sm rounded-lg ring ring-transparent focus:ring-1 focus:outline-none focus:ring-gray-400 block w-full p-2.5 rounded-l-lg py-3 px-4" placeholder="name" autocomplete="off" required>
+                    <input type="txex" name="username" id="username" class="pl-12 mb-2 bg-gray-50 text-gray-600 border focus:border-transparent border-gray-300 sm:text-sm rounded-lg ring ring-transparent focus:ring-1 focus:outline-none focus:ring-gray-400 block w-full p-2.5 rounded-l-lg py-3 px-4" placeholder="name" autocomplete="off" required>
                 </div>
             </div>
             <div class="pb-6">

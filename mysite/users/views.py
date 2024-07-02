@@ -3,6 +3,7 @@ from django.views import View
 from django.utils import timezone
 from django.contrib.auth import (authenticate, login, logout)
 from rest_framework import (viewsets, views, permissions, status, response)
+from datetime import timedelta
 from . import (serializers, models)
 
 # Create your views here.
@@ -22,19 +23,23 @@ class VisitCreateView(views.APIView):
         try:
             ip_addres = request.META.get('REMOTE_ADDR')
             user_agent = request.META.get('HTTP_USER_AGENT','')
-            models.Visit.objects.create(
+            visit = models.Visit.objects.create(
                 timestap=timezone.now(),
                 ip_addres=ip_addres,
                 user_agent=user_agent
             )
-            serializer = serializers.VisitSerializer(data=request.data)
+            data = {
+                'ip_addres':ip_addres,
+                'user_agent':user_agent
+            }
+            serializer = serializers.VisitSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 self.update_weekly_visit_count()
                 return response.Response(serializer.data, status=status.HTTP_201_CREATED)
             return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as err:
-            print(f'Error: {err}')
+            print(f'Error: {err.args}')
             return response.Response({'message':'Error data no presentada'},status=status.HTTP_400_BAD_REQUEST)
     
     def update_weekly_visit_count(self):
@@ -42,10 +47,10 @@ class VisitCreateView(views.APIView):
         start_of_week = now - timedelta(days=now.weekday())
         end_of_week = start_of_week + timedelta(days=6)
 
-        weekly_visit, created = models.Visit.objects.get_or_create(
-            timestap__gte=start_of_week,
-            timestap__lte=end_of_week,
-            default = {'visit_count': 0}
+        weekly_visit, created = models.WeeklyVisit.objects.get_or_create(
+            week_start=start_of_week,
+            week_end=end_of_week,
+            defaults = {'visit_count': 0}
         )
 
         weekly_visit.visit_count += 1
@@ -96,8 +101,8 @@ class VisitDataChart(views.APIView):
             data = []
 
             for visit in weekly_visits:
-                categories.append(visit.week_start.strftime('%a'))
-                data.append(visit.visit_count if visit.visit_count else 0)
+                categories.append(f'{visit.week_start},{visit.week_end}')
+                data.append(visit.visit_count)
             
             return categories, data
         except Exception as err:
