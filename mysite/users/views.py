@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views import View
 from django.utils import timezone
 from django.contrib.auth import (authenticate, login, logout)
-from rest_framework import (viewsets, views, permissions, status, response, authentication)
+from rest_framework import (viewsets, views, permissions, status, response, authentication, decorators)
 from datetime import timedelta
 from . import (serializers, models)
 
@@ -12,6 +12,39 @@ class UserViews(viewsets.ModelViewSet):
     queryset = models.User.objects.all()
     serializer_class = serializers.UserSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @decorators.action(['GET'], detail=True, url_path='type_user')
+    def get_type(self, request ,pk=1):
+        try:
+            user = models.User.objects.get(id=pk)
+            type_user = models.TypeUser.objects.get(id=user.type_user_id)
+            serializer = serializers.TypeUserSerializer(type_user)
+            return response.Response(serializer.data, status=status.HTTP_200_OK)
+        except models.User.DoesNotExist as err:
+            print(f'Error en get_type: {err}')
+            return response.Response({'message':f'Error {err}'},status=status.HTTP_404_NOT_FOUND)
+        except models.TypeUser.DoesNotExist as err:
+            print(f'Error en get_type: {err}')
+            return response.Response({'message':f'Error {err}'},status=status.HTTP_404_NOT_FOUND)
+        except Exception as err:
+            print(f'Error en get_type: {err}')
+            return response.Response({'message':f'Error {err}'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+    @decorators.action(['GET'], detail=True, url_path='type_user')
+    def get_likes(self, riquest, pk=1):
+        try:
+            from posts.serializers import SerializerLike
+            user = models.User.objects.get(id=pk)
+            likes = user.get_likes_info()
+            serializer = SerializerLike(likes, many=True)
+            return response.Response(serializer.data, status=status.HTTP_200_OK)
+        except models.User.DoesNotExist as err:
+            print(f'Error en get_likes: {err}')
+            return response.Response({'message':f'Error {err}'},status=status.HTTP_404_NOT_FOUND)
+        except Exception as err:
+            print(f'Error en get_likes: {err}')
+            return response.Response({'message':f'Error {err}'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class TypeUserViews(viewsets.ModelViewSet):
     queryset = models.TypeUser.objects.all()

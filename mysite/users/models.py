@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from django.contrib.auth import (authenticate, login, logout)
 
+
 # Create your models here.
 class TypeUser(models.Model):
     type_user = models.TextChoices('type_user', 'admin user')
@@ -45,6 +46,15 @@ class User(AbstractUser):
         self.last_logout = timezone.now()
         self.save()
         logout(request)
+    
+    def get_likes_info(self):
+        try: 
+            from posts.models import Like
+            likes = Like.objects.filter(user=self)
+            return likes
+        except Exception as err:
+            print('No existe el modelo Like', err.args)
+            return ['No content',err.args]
     
     def __str__(self):
         return f'''

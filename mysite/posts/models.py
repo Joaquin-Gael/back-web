@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 import os
 
 def validate_file_extencion(value):
-    valid_extencion = ['.png', '.jpg', '.jpeg','.pdf','.docx','.pptx','.pptm','.potx','.docm','.dotx','.dotm']
+    valid_extencion = ['.png', '.jpg', '.jpeg','.pdf','.docx','.pptx','.pptm','.potx','.docm','.dotx','.dotm','.sql']
     try:
         ext = os.path.splitext(value.name)[1]
         if ext not in valid_extencion:
