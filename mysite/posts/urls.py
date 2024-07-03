@@ -10,5 +10,6 @@ router.register(r'likes', views.LikeViews, basename='likes')
 router.register(r'files', views.FilePostViews, basename='files')
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('posts/<int:pk>/file/', views.PostsViews.as_view({'get':'get_file'}), name='file_post')
 ]

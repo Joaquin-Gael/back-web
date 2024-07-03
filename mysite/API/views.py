@@ -9,7 +9,7 @@ import users
 # Create your views here.
 class IndexAPI(views.View):
     def get(self,request,*args,**kwargs):
-        if not request.user.is_authenticated:
+        if request.user.is_authenticated:
             return redirect('login')
         messages = models.MessagesAPI.objects.all()
         return render(request,'index.html',{
