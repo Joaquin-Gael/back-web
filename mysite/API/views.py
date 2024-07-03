@@ -1,6 +1,7 @@
 from django.shortcuts import (render, redirect)
 from rest_framework import (viewsets, views, permissions, status, response)
 from django.utils import timezone
+from django.http import (HttpResponse, HttpResponseRedirect)
 
 import users.models
 from . import (models, serializers)
@@ -8,8 +9,8 @@ import users
 
 # Create your views here.
 class IndexAPI(views.View):
-    def get(self,request,*args,**kwargs):
-        if request.user.is_authenticated:
+    def get(self,request,*args,**kwargs) -> HttpResponse:
+        if not request.user.is_authenticated:
             return redirect('login')
         messages = models.MessagesAPI.objects.all()
         return render(request,'index.html',{
@@ -18,10 +19,10 @@ class IndexAPI(views.View):
         })
 
 class LoginAPI(views.View):
-    def get(self,request,*args,**kwargs):
+    def get(self,request,*args,**kwargs) -> HttpResponse:
         return render(request,'login.html')
     
-    def post(self,request,*args,**kwargs):
+    def post(self,request,*args,**kwargs) -> HttpResponseRedirect:
         try:
             username = request.POST.get('username')
             password = request.POST.get('password')
@@ -37,7 +38,7 @@ class LoginAPI(views.View):
             redirect('login')
 
 class LogoutAPI(views.View):
-    def get(self,request,*args,**kwargs):
+    def get(self,request,*args,**kwargs) -> HttpResponseRedirect:
         try:
             user = request.user
             user.logout_date_set(request)
@@ -46,7 +47,9 @@ class LogoutAPI(views.View):
             return redirect('login')
 
 class UsersAPI(views.View):
-    def get(self,request,*args,**kwargs):
+    def get(self,request,*args,**kwargs) -> HttpResponse:
+        if not request.user.is_authenticated:
+            return redirect('login')
         try:
             users_list = users.models.User.objects.all()
             return render(request,'users.html',{
@@ -61,4 +64,4 @@ class UsersAPI(views.View):
 class MessagesAPI(viewsets.ModelViewSet):
     queryset = models.MessagesAPI.objects.all()
     serializer_class = serializers.MessagesSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]

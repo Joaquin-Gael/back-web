@@ -34,20 +34,32 @@ class User(AbstractUser):
     last_logout = models.DateField(null=True, blank=True)
     type_user = models.ForeignKey(TypeUser, on_delete=models.CASCADE, null=True)
 
-    def is_staff_user(self):
+    def is_staff_user(self) -> bool:
+        """RETORNA SI ES STAFF"""
         return self.is_staff
 
-    def login_date_set(self,request,password):
+    def login_date_set(self,request,password) -> None:
+        """SETA LA FECHA DE LOGIN Y GENERA LA SESSION"""
         self.last_login = timezone.now()
         self.save()
         login(request, authenticate(username=self.username, password=password))
     
-    def logout_date_set(self,request):
+    def logout_date_set(self,request) -> None:
+        """SETEA LA FECHA DE LOGOUT Y CIERRA LA SESSION"""
         self.last_logout = timezone.now()
         self.save()
         logout(request)
     
-    def get_likes_info(self):
+    def get_likes_info(self) -> [object]:
+        """RETORNA UN LISTADO DE LOS LIKES DEL USUARIO O UNA LISTA CON ERROR SI NO EXISTE EL MODELO
+        try: 
+            from posts.models import Like
+            likes = Like.objects.filter(user=self)
+            return likes
+        except Exception as err:
+            print('No existe el modelo Like', err.args)
+            return ['No content',err.args]
+        """
         try: 
             from posts.models import Like
             likes = Like.objects.filter(user=self)
@@ -56,7 +68,7 @@ class User(AbstractUser):
             print('No existe el modelo Like', err.args)
             return ['No content',err.args]
     
-    def __str__(self):
+    def __str__(self) -> str:
         return f'''
             {self.username},
             {self.email},
@@ -81,7 +93,7 @@ class Visit(models.Model):
     ip_addres = models.GenericIPAddressField()
     user_agent = models.CharField(max_length=255)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'''
             {self.timestap},
             {self.ip_addres},
@@ -102,7 +114,7 @@ class WeeklyVisit(models.Model):
     week_end = models.DateField()
     visit_count = models.PositiveIntegerField(default=0)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'''
             {self.week_start},
             {self.week_end},

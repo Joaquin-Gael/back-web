@@ -15,7 +15,7 @@ class PostsViews(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
     @decorators.action(['GET'], detail=True, url_path='file')
-    def get_file(self, request, pk=1):
+    def get_file(self, request, pk=1) -> response.Response:
         try:
             file = models.FilePost.objects.filter(post=pk)
             serializer = serializers.SerializerFilePost(file, many=True)
@@ -25,17 +25,18 @@ class PostsViews(viewsets.ModelViewSet):
             return response.Response({'Not Found Relation':err.args},status=status.HTTP_400_BAD_REQUEST)
     
     @decorators.action(['GET'], detail=True, url_path='likes')
-    def get_likes(self, request, pk=1):
+    def get_likes(self, request, pk=1) -> response.Response:
         try:
             likes = models.Like.objects.filter(post=pk)
+            post = models.Post.objects.get(id=pk)
             serializer = serializers.SerializerLike(likes, many=True)
-            return response.Response(serializer.data)
+            return response.Response({'count':post.amount_likes(),'likes':serializer.data})
         except Exception as err:
             print(err.__class__, '------------------------')
             return response.Response({'Not Found Relation':err.args},status=status.HTTP_400_BAD_REQUEST)
     
     @decorators.action(['GET'], detail=True, url_path='user')
-    def get_user(self, rquest, pk=1):
+    def get_user(self, rquest, pk=1) -> response.Response:
         try:
             post = models.Post.objects.get(id=pk)
             user = User.objects.get(id=post.user.id)
@@ -49,7 +50,7 @@ class PostsViews(viewsets.ModelViewSet):
             return response.Response({'Not Found Relation':err.args},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @decorators.action(['GET'], detail=True, url_path='comments')
-    def get_comments(self, request, pk=1):
+    def get_comments(self, request, pk=1) -> response.Response:
         try:
             comments = models.Comment.objects.filter(post=pk)
             serializer = serializers.SerializerComment(comments, many=True)

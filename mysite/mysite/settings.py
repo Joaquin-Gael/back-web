@@ -13,21 +13,26 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-CORS_ALLOWED_ORIGINS = [
+if DEBUG:
+    CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'http://localhost:4200',
-]
+    ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+    CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
+    CORS_ALLOW_METHODS = [
+        'DELETE',
+        'GET',
+        'OPTIONS',
+        'PATCH',
+        'POST',
+        'PUT',
+    ]
+elif not DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = False
+
+    ALLOWED_HOSTS.append(host for host in os.environ.get('ALLOWED_HOSTS'))
 
 INSTALLED_APPS = [
     'django.contrib.admin',

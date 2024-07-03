@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.core.exceptions import ValidationError
 import os
 
-def validate_file_extencion(value):
+def validate_file_extencion(value) -> None:
     valid_extencion = ['.png', '.jpg', '.jpeg','.pdf','.docx','.pptx','.pptm','.potx','.docm','.dotx','.dotm','.sql']
     try:
         ext = os.path.splitext(value.name)[1]
@@ -26,13 +26,15 @@ class Post(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def amount_likes(self):
+    def amount_likes(self) -> int:
+        """RETORNA LA CANTIDAD DE LIKES QUE ESTEN RELACIONADOS CON EL POST"""
         return Like.objects.filter(post=self).count()
     
-    def get_file_post(self):
+    def get_file_post(self) -> object | None:
+        """RETORNA LA DATA DE EL ARCHIVO RELACIONADO CON EL POST"""
         return FilePost.objects.filter(post=self).first()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'''
             {self.title},
             {self.text},
@@ -55,7 +57,7 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'''
             {self.post},
             {self.text},
