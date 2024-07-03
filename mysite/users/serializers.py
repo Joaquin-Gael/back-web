@@ -4,7 +4,7 @@ from users.models import (User, TypeUser, Visit, WeeklyVisit)
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        exclude = ['groups', 'user_permissions', 'first_name', 'last_name', 'last_login', 'is_staff', 'is_superuser']
+        exclude = ['groups', 'user_permissions', 'first_name', 'last_name', 'last_login', 'is_staff', 'is_superuser','last_logout']
     
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
         for key, value in validated_data.items():
             setattr(instance, key, value)
         instance.save()
-        return
+        return self
 
 class TypeUserSerializer(serializers.ModelSerializer):
     class Meta:

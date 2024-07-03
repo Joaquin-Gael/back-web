@@ -15,3 +15,4 @@ djangorestframework-simplejwt==5.3.1
 django-cors-headers==4.4.0
 PyJWT==2.8.0
 django-appconf==1.0.6
+rich==13.7.1 

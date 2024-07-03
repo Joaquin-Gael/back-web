@@ -13,5 +13,6 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('visit/', views.VisitCreateView.as_view(), name='visit_create'),
-    path('visit/chart',views.VisitDataChart.as_view(),name='visit_chart')
+    path('visit/chart',views.VisitDataChart.as_view(),name='visit_chart'),
+    path('token/user/id/', views.UserIDByToken.as_view(), name='user_id'),
 ]

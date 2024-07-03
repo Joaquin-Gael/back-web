@@ -10,7 +10,7 @@ import users
 # Create your views here.
 class IndexAPI(views.View):
     def get(self,request,*args,**kwargs) -> HttpResponse:
-        if not request.user.is_authenticated:
+        if request.user.is_authenticated:
             return redirect('login')
         messages = models.MessagesAPI.objects.all()
         return render(request,'index.html',{
@@ -48,7 +48,7 @@ class LogoutAPI(views.View):
 
 class UsersAPI(views.View):
     def get(self,request,*args,**kwargs) -> HttpResponse:
-        if not request.user.is_authenticated:
+        if request.user.is_authenticated:
             return redirect('login')
         try:
             users_list = users.models.User.objects.all()

@@ -3,15 +3,46 @@ from django.views import View
 from django.utils import timezone
 from django.contrib.auth import (authenticate, login, logout)
 from rest_framework import (viewsets, views, permissions, status, response, authentication, decorators)
+from rest_framework_simplejwt.tokens import AccessToken
 from datetime import timedelta
 from . import (serializers, models)
+from rich import print
 
 # Create your views here.
+
+class UserIDByToken(views.APIView):
+    def get(self, request, *args, **kwargs) -> int:
+        try:
+            token = request.auth
+            acces_data = AccessToken(token)
+            user_id = acces_data['user_id']
+            return response.Response({'user_id':user_id}, status=status.HTTP_200_OK)
+        except KeyError as err:
+            print(f'Error con la obtencion del id: {err.args}')
+            return response.Response({'message':'Token no valido'},status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as err:
+            print(f'Error en get_user_id: {err.__class__}')
+            return response.Response({'message':f'Error {err.args}'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UserViews(viewsets.ModelViewSet):
     queryset = models.User.objects.all()
     serializer_class = serializers.UserSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    @decorators.action(['GET'], detail=True, url_path='is_staff')
+    def get_is_staff_user(self, request, pk=1) -> {str,bool}:
+        try:
+            user = models.User.objects.get(id=pk)
+            for key, value in user.__dict__.items():
+                print(key, value)
+            is_staff_user = user.is_staff_user()
+            return response.Response({'is_staff_user':is_staff_user}, status=status.HTTP_200_OK)
+        except models.User.DoesNotExist as err:
+            print(f'Error en get_is_staff_user: {err}')
+            return response.Response({'message':f'Error {err}'},status=status.HTTP_404_NOT_FOUND)
+        except Exception as err:
+            print(f'Error en get_is_staff_user: {err}')
+            return response.Response({'message':f'Error {err}'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @decorators.action(['GET'], detail=True, url_path='type_user')
     def get_type(self, request ,pk=1):
@@ -30,7 +61,7 @@ class UserViews(viewsets.ModelViewSet):
             print(f'Error en get_type: {err}')
             return response.Response({'message':f'Error {err}'},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    @decorators.action(['GET'], detail=True, url_path='type_user')
+    @decorators.action(['GET'], detail=True, url_path='likes')
     def get_likes(self, riquest, pk=1):
         try:
             from posts.serializers import SerializerLike
